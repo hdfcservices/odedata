@@ -48,7 +48,7 @@ const App = () => {
           <Route path='/forget-customer-id' element={<ForgotCustomerID  />} />
           <Route path='/forget-password' element={<ForgotCustomerID  />} />
           <Route path='/new-registration' element={<ForgotCustomerID  />} />
-          <Route path='/customer-id-login/' element={<CustomerIdLogin />} />
+          <Route path='/customer-id-login' element={<CustomerIdLogin />} />
 
           <Route path='/success/:id' element={<Success />} />
 
