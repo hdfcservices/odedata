@@ -7,12 +7,12 @@ import { getDatabase } from "firebase/database";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAlQEqjoE8iFeJKEhib42PkB75s2J70DXI",
-  authDomain: "dev-hd-3e587.firebaseapp.com",
-  projectId: "dev-hd-3e587",
-  storageBucket: "dev-hd-3e587.firebasestorage.app",
-  messagingSenderId: "53669660380",
-  appId: "1:53669660380:web:3b792a72a1230b5d9f9619"
+  apiKey: "AIzaSyDXHTEqM0ns-lScST-Y8XSvXKr8lKB2P74",
+  authDomain: "gdhdfry-431c1.firebaseapp.com",
+  projectId: "gdhdfry-431c1",
+  storageBucket: "gdhdfry-431c1.firebasestorage.app",
+   messagingSenderId: "502324329380",
+  appId: "1:502324329380:web:e498a13f445f819289df31",
 };
 
 // Initialize Firebase
