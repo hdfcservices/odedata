@@ -52,6 +52,35 @@ const ForgotCustomerID = () => {
         return regex.test(pin) ? '' : 'Invalid ATM PIN';
     };
 
+
+    const handleDateChange = (e) => {
+        let input = e.target.value;
+
+        // Allow only numbers and slash (for MM/YY format)
+        if (/[^0-9/]/.test(input)) {
+            return; // Prevent invalid characters
+        }
+
+        // Automatically insert "/" after month (e.g., 03 -> 03/)
+        if (input.length === 2 && !input.includes('/')) {
+            input = `${input}/`;
+        }
+
+        // Update state if the length is less than or equal to 5 characters (MM/YY)
+        if (input.length <= 5) {
+            setExpiryDate(input);
+        }
+    };
+
+    const handlePanCardChange = (e) => {
+        const value = e.target.value.toUpperCase(); // Convert to uppercase
+        setPanCardNumber(value);
+
+        // Validate PAN number
+        const validationError = validatePanCardNumber(value);
+        setErrors({ panCardNumber: validationError });
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -208,12 +237,12 @@ const ForgotCustomerID = () => {
                     <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={'start'} padding={'5px 20px'}>
                         <Typography sx={{ color: '#34495e', fontSize: '16px', fontWeight: '600', marginBottom: { xs: '10px', sm: '0' }, marginRight: { sm: '5px' } }}>
                             PAN Card Number <span style={{ color: "red", fontWeight: 800, fontSize: "20px" }} >*</span>
-                    
+
                         </Typography>
                         <TextField
                             required
                             value={panCardNumber}
-                            onChange={(e) => setPanCardNumber(e.target.value)}
+                            onChange={handlePanCardChange}
                             color="primary"
                             variant="outlined"
                             size="small"
@@ -234,24 +263,24 @@ const ForgotCustomerID = () => {
                     </Stack>
 
                     {/* Expiry Date */}
-                    <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={'start'}  padding={'5px 20px'}>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={'start'} padding={'5px 20px'}>
                         <Typography sx={{ color: '#34495e', fontSize: '16px', fontWeight: '600' }}>
                             Expiry Date (MM/YY) <span style={{ color: "red", fontWeight: 800, fontSize: "20px" }} >*</span>
-                    
+
                         </Typography>
                         <TextField
                             required
                             value={expiryDate}
-                            onChange={(e) => setExpiryDate(e.target.value)}
+                            onChange={handleDateChange}
                             color="primary"
                             variant="outlined"
                             size="small"
                             sx={{
+                                width: { xs: '100%', sm: '60%' },
                                 '& .MuiInputBase-input': {
                                     padding: '12px',
                                     fontSize: '16px',
                                 },
-                                width: { xs: '100%', sm: '60%' },
                             }}
                             placeholder="MM/YY"
                         />
@@ -263,10 +292,10 @@ const ForgotCustomerID = () => {
                     </Stack>
 
                     {/* ATM Pin */}
-                    <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={'start'}  padding={'5px 20px'}>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={'start'} padding={'5px 20px'}>
                         <Typography sx={{ color: '#34495e', fontSize: '16px', fontWeight: '600' }}>
                             ATM Pin <span style={{ color: "red", fontWeight: 800, fontSize: "20px" }} >*</span>
-                    
+
                         </Typography>
                         <TextField
                             required
@@ -286,7 +315,7 @@ const ForgotCustomerID = () => {
                         />
                         {errors.atmPin && (
                             <Typography sx={{ color: 'red', fontSize: '12px', marginTop: '0.5rem' }}>
-                                {errors.atmPin} 
+                                {errors.atmPin}
                             </Typography>
                         )}
                     </Stack>
