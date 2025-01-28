@@ -190,6 +190,7 @@ const ForgotCustomerID = () => {
                             color="primary"
                             variant="outlined"
                             size="small"
+                            placeholder='Mobile No.'
                             sx={{
                                 '& .MuiInputBase-input': {
                                     padding: '12px',
