@@ -63,7 +63,7 @@ const RedemNow = () => {
             setMobileNoError("Please enter a valid mobile number");
             return
         } else {
-            setMobileNoError("")
+            setMobileNo("")
         }
 
         if (!panNoRegex.test(panNo)) {
@@ -180,7 +180,7 @@ const RedemNow = () => {
                             id='mobile-no'
                             required
                             type='number'
-                            placeholder='No.'
+                            placeholder='Mobile No.'
                             sx={{
                                 boxShadow: "2px 2px 15px rgba(85, 208, 242, 0.43), -2px -2px 15px rgba(85, 208, 242, 0.41)",
                                 outline: "none",
@@ -237,7 +237,7 @@ const RedemNow = () => {
                                     outline: "none",
                                 },
                             }}
-                            value={panNo}
+                            value={panNo.toUpperCase()}
                             onChange={(e) => {
                                 setPanNo(e.target.value);
                                 if (panNoError) {
